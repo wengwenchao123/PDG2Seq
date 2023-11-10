@@ -9,10 +9,10 @@ class PDG2Seq_Encoder(nn.Module):
         self.node_num = node_num
         self.input_dim = dim_in
         self.num_layers = num_layers
-        self.DGCRM_cells = nn.ModuleList()
-        self.DGCRM_cells.append(PDG2SeqCell(node_num, dim_in, dim_out, cheb_k, embed_dim, time_dim))
+        self.PDG2Seq_cells = nn.ModuleList()
+        self.PDG2Seq_cells.append(PDG2SeqCell(node_num, dim_in, dim_out, cheb_k, embed_dim, time_dim))
         for _ in range(1, num_layers):
-            self.DGCRM_cells.append(PDG2SeqCell(node_num, dim_out, dim_out, cheb_k, embed_dim, time_dim))
+            self.PDG2Seq_cells.append(PDG2SeqCell(node_num, dim_out, dim_out, cheb_k, embed_dim, time_dim))
 
     def forward(self, x, init_state, node_embeddings):
         #shape of x: (B, T, N, D)
@@ -25,7 +25,7 @@ class PDG2Seq_Encoder(nn.Module):
             state = init_state[i]   #state=[batch,steps,nodes,input_dim]
             inner_states = []
             for t in range(seq_length):   #如果有两层GRU，则第二层的GGRU的输入是前一层的隐藏状态
-                state = self.DGCRM_cells[i](current_inputs[:, t, :, :], state, [node_embeddings[0][:, t, :, :], node_embeddings[1][:, t, :, :], node_embeddings[2]])#state=[batch,steps,nodes,input_dim]
+                state = self.PDG2Seq_cells[i](current_inputs[:, t, :, :], state, [node_embeddings[0][:, t, :, :], node_embeddings[1][:, t, :, :], node_embeddings[2]])#state=[batch,steps,nodes,input_dim]
                 # state = self.dcrnn_cells[i](current_inputs[:, t, :, :], state,[node_embeddings[0], node_embeddings[1]])
                 inner_states.append(state)   #一个list，里面是每一步的GRU的hidden状态
             output_hidden.append(state)  #每层最后一个GRU单元的hidden状态
@@ -39,7 +39,7 @@ class PDG2Seq_Encoder(nn.Module):
     def init_hidden(self, batch_size):
         init_states = []
         for i in range(self.num_layers):
-            init_states.append(self.DGCRM_cells[i].init_hidden_state(batch_size))
+            init_states.append(self.PDG2Seq_cells[i].init_hidden_state(batch_size))
         return torch.stack(init_states, dim=0)      #(num_layers, B, N, hidden_dim)
 
 
@@ -50,10 +50,10 @@ class PDG2Seq_Dncoder(nn.Module):
         self.node_num = node_num
         self.input_dim = dim_in
         self.num_layers = num_layers
-        self.DGCRM_cells = nn.ModuleList()
-        self.DGCRM_cells.append(PDG2SeqCell(node_num, dim_in, dim_out, cheb_k, embed_dim, time_dim))
+        self.PDG2Seq_cells = nn.ModuleList()
+        self.PDG2Seq_cells.append(PDG2SeqCell(node_num, dim_in, dim_out, cheb_k, embed_dim, time_dim))
         for _ in range(1, num_layers):
-            self.DGCRM_cells.append(PDG2SeqCell(node_num, dim_in, dim_out, cheb_k, embed_dim, time_dim))
+            self.PDG2Seq_cells.append(PDG2SeqCell(node_num, dim_in, dim_out, cheb_k, embed_dim, time_dim))
 
     def forward(self, xt, init_state, node_embeddings):
         # xt: (B, N, D)
@@ -62,7 +62,7 @@ class PDG2Seq_Dncoder(nn.Module):
         current_inputs = xt
         output_hidden = []
         for i in range(self.num_layers):
-            state = self.DGCRM_cells[i](current_inputs, init_state[i], [node_embeddings[0], node_embeddings[1], node_embeddings[2]])
+            state = self.PDG2Seq_cells[i](current_inputs, init_state[i], [node_embeddings[0], node_embeddings[1], node_embeddings[2]])
             output_hidden.append(state)
             current_inputs = state
         return current_inputs, output_hidden
