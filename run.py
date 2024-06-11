@@ -25,9 +25,9 @@ warnings.filterwarnings('ignore')
 from lib.metrics import MAE_torch
 def masked_mae_loss(scaler, mask_value):
     def loss(preds, labels):
-        if scaler:
-            preds = scaler.inverse_transform(preds)
-            labels = scaler.inverse_transform(labels)
+        # if scaler:
+        #     preds = scaler.inverse_transform(preds)
+        #     labels = scaler.inverse_transform(labels)
         mae = MAE_torch(pred=preds, true=labels, mask_value=mask_value)
         return mae
     return loss
@@ -40,11 +40,11 @@ def masked_mae_loss(scaler, mask_value):
 
 #parser
 args = argparse.ArgumentParser(description='arguments')
-args.add_argument('--dataset', default='PEMSD8', type=str)  #Seattle  PEMSD4
-args.add_argument('--mode', default='train', type=str)
+args.add_argument('--dataset', default='PEMSD4', type=str)  #PEMSD4
+args.add_argument('--mode', default='test', type=str)
 args.add_argument('--device', default='cuda:0', type=str, help='indices of GPUs')
 args.add_argument('--debug', default='False', type=eval)
-args.add_argument('--model', default='DDGCRN', type=str)
+args.add_argument('--model', default='PDG2Seq', type=str)
 args.add_argument('--cuda', default=True, type=bool)
 args1 = args.parse_args()
 
@@ -65,7 +65,8 @@ args.add_argument('--tod', default=config['data']['tod'], type=eval)
 args.add_argument('--normalizer', default=config['data']['normalizer'], type=str)
 args.add_argument('--column_wise', default=config['data']['column_wise'], type=eval)
 args.add_argument('--default_graph', default=config['data']['default_graph'], type=eval)
-
+args.add_argument('--steps_per_day', default=config['data']['steps_per_day'], type=int)
+args.add_argument('--steps_per_week', default=config['data']['steps_per_week'], type=int)
 #model
 args.add_argument('--input_dim', default=config['model']['input_dim'], type=int)
 args.add_argument('--output_dim', default=config['model']['output_dim'], type=int)
@@ -86,6 +87,7 @@ args.add_argument('--weight_decay', default=config['train']['weight_decay'], typ
 args.add_argument('--lr_decay', default=config['train']['lr_decay'], type=eval)
 args.add_argument('--lr_decay_rate', default=config['train']['lr_decay_rate'], type=float)
 args.add_argument('--lr_decay_step', default=config['train']['lr_decay_step'], type=float)
+args.add_argument('--lr_decay_step1', default=config['train']['lr_decay_step1'], type=str)
 args.add_argument('--early_stop', default=config['train']['early_stop'], type=eval)
 args.add_argument('--early_stop_patience', default=config['train']['early_stop_patience'], type=int)
 args.add_argument('--grad_norm', default=config['train']['grad_norm'], type=eval)
@@ -141,8 +143,8 @@ optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr_init, eps=1.0
 lr_scheduler = None
 if args.lr_decay:
     print('Applying learning rate decay.')
-    # lr_decay_steps = [int(i) for i in list(args.lr_decay_step.split(','))]
-    lr_decay_steps =[50,80,120,160]
+    lr_decay_steps = [int(i) for i in list(args.lr_decay_step1.split(','))]
+    # lr_decay_steps =[60,75,90,120,150]
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
                                                         milestones=lr_decay_steps,
                                                         gamma=args.lr_decay_rate)
