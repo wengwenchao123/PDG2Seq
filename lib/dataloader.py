@@ -4,7 +4,7 @@ import torch.utils.data
 from lib.add_window import Add_Window_Horizon
 from lib.load_dataset import load_st_dataset
 from lib.normalization import NScaler, MinMax01Scaler, MinMax11Scaler, StandardScaler, ColumnMinMaxScaler
-
+import os
 def normalize_dataset(data, normalizer, column_wise=False):
     if normalizer == 'max01':
         if column_wise:
@@ -48,9 +48,10 @@ def normalize_dataset(data, normalizer, column_wise=False):
         print('Normalize the dataset by Column Min-Max Normalization')
     else:
         raise ValueError
-    return data, scaler
+    # return data, scaler
+    return scaler
 
-def split_data_by_days(data, val_days, test_days, interval=60):
+def split_data_by_days(data, val_days, test_days, interval=30):
     '''
     :param data: [B, *]
     :param val_days:
@@ -59,9 +60,10 @@ def split_data_by_days(data, val_days, test_days, interval=60):
     :return:
     '''
     T = int((24*60)/interval)
-    test_data = data[-T*test_days:]
-    val_data = data[-T*(test_days + val_days): -T*test_days]
-    train_data = data[:-T*(test_days + val_days)]
+    x = -T*test_days
+    test_data = data[-int(T*test_days):]
+    val_data = data[-int(T*(test_days + val_days)): -int(T*test_days)]
+    train_data = data[:-int(T*(test_days + val_days))]
     return train_data, val_data, test_data
 
 def split_data_by_ratio(data, val_ratio, test_ratio):
@@ -84,43 +86,54 @@ def data_loader(X, Y, batch_size, shuffle=True, drop_last=True):
 def get_dataloader(args, normalizer = 'std', tod=False, dow=False, weather=False, single=True):
     #load raw st dataset
     data = load_st_dataset(args.dataset)        # B, N, D
-    #normalize st data
-    data, scaler = normalize_dataset(data, normalizer, args.column_wise)
 
     L, N, F = data.shape
 
-    feature_list = [data]
+    # feature_list = [data]
 
+    t = args.steps_per_day
     # numerical time_in_day
-    time_ind    = [i%288 / 288 for i in range(data.shape[0])]
+    time_ind    = [i%t / t for i in range(data.shape[0])]
     time_ind    = np.array(time_ind)
     time_in_day = np.tile(time_ind, [1, N, 1]).transpose((2, 1, 0))
-    feature_list.append(time_in_day)
+    # feature_list.append(time_in_day)
 
     # numerical day_in_week
-    day_in_week = [(i // 288)%7 for i in range(data.shape[0])]
+    day_in_week = [(i // t)%args.steps_per_week for i in range(data.shape[0])]
     day_in_week = np.array(day_in_week)
     day_in_week = np.tile(day_in_week, [1, N, 1]).transpose((2, 1, 0))
-    feature_list.append(day_in_week)
+    # feature_list.append(day_in_week)
 
-    data = np.concatenate(feature_list, axis=-1)
-
+    # data = np.concatenate(feature_list, axis=-1)
+    x, y = Add_Window_Horizon(data, args.lag, args.horizon, single)
+    x_day, y_day = Add_Window_Horizon(time_in_day, args.lag, args.horizon, single)
+    x_week, y_week = Add_Window_Horizon(day_in_week, args.lag, args.horizon, single)
+    x, y = np.concatenate([x,x_day,x_week], axis=-1), np.concatenate([y,y_day,y_week], axis=-1)
 
     #spilit dataset by days or by ratio
     if args.test_ratio > 1:
-        data_train, data_val, data_test = split_data_by_days(data, args.val_ratio, args.test_ratio)
+        x_train, x_val, x_test = split_data_by_days(x, args.val_ratio, args.test_ratio)
+        y_train, y_val, y_test = split_data_by_days(y, args.val_ratio, args.test_ratio)
+        # day_train, day_val, day_test = split_data_by_days(time_in_day, args.val_ratio, args.test_ratio)
+        # week_train, week_val, week_test = split_data_by_days(day_in_week, args.val_ratio, args.test_ratio)
     else:
-        data_train, data_val, data_test = split_data_by_ratio(data, args.val_ratio, args.test_ratio)
-    #add time window
-    x_tra, y_tra = Add_Window_Horizon(data_train, args.lag, args.horizon, single)
-    x_val, y_val = Add_Window_Horizon(data_val, args.lag, args.horizon, single)
-    x_test, y_test = Add_Window_Horizon(data_test, args.lag, args.horizon, single)
-    print('Train: ', x_tra.shape, y_tra.shape)
+        x_train, x_val, x_test = split_data_by_ratio(x, args.val_ratio, args.test_ratio)
+        y_train, y_val, y_test = split_data_by_ratio(y, args.val_ratio, args.test_ratio)
+        # week_train, week_val, week_test = split_data_by_ratio(day_in_week, args.val_ratio, args.test_ratio)
+
+    scaler = normalize_dataset(x_train[...,:args.input_dim], normalizer, args.column_wise)
+
+    x_train[...,:args.input_dim] = scaler.transform(x_train[...,:args.input_dim])
+    x_val[...,:args.input_dim] = scaler.transform(x_val[...,:args.input_dim])
+    x_test[...,:args.input_dim] = scaler.transform(x_test[...,:args.input_dim])
+
+    print('Train: ', x_train.shape, y_train.shape)
     print('Val: ', x_val.shape, y_val.shape)
     print('Test: ', x_test.shape, y_test.shape)
+
     ##############get dataloader######################
-    train_dataloader = data_loader(x_tra, y_tra, args.batch_size, shuffle=True, drop_last=True)
-    if len(x_val) == 0:
+    train_dataloader = data_loader(x_train, y_train, args.batch_size, shuffle=True, drop_last=True)
+    if len(x_val[...,0]) == 0:
         val_dataloader = None
     else:
         val_dataloader = data_loader(x_val, y_val, args.batch_size, shuffle=False, drop_last=True)
@@ -171,11 +184,9 @@ def get_adjacency_matrix2(distance_df_filename, num_of_vertices,
 if __name__ == '__main__':
     import argparse
     #MetrLA 207; BikeNYC 128; SIGIR_solar 137; SIGIR_electric 321
-    DATASET = 'METR-LA'
-    if DATASET == 'METR-LA':
+    DATASET = 'SIGIR_electric'
+    if DATASET == 'MetrLA':
         NODE_NUM = 207
-    elif DATASET == 'Seattle':
-        NODE_NUM = 323
     elif DATASET == 'BikeNYC':
         NODE_NUM = 128
     elif DATASET == 'SIGIR_solar':

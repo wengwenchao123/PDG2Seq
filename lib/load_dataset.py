@@ -22,18 +22,6 @@ def load_st_dataset(dataset):
     elif dataset == 'PEMSD7(M)':
         data_path = os.path.join('./data/PEMS07(M)/V_228.csv')
         data = np.array(pd.read_csv(data_path,header=None))  #onley the first dimension, traffic flow data
-    elif dataset == 'Seattle':
-        data_path = os.path.join('./data/Seattle/Loop_Seattle.npz')
-        data = np.load(data_path,allow_pickle=True)['data'][:, :, 0].astype(float)
-
-    elif dataset == 'METR-LA':
-        data_path = os.path.join('./data/METR-LA/METR.h5')
-        data = pd.read_hdf(data_path)
-    elif dataset == 'BJ':
-        data_path = os.path.join('./data/BJ/BJ500.csv')
-        data = np.array(pd.read_csv(data_path, header=0, index_col=0))
-        # df = pd.read_csv('data/BJ500.csv', header=0, index_col=0)
-        # Traffic = df.values
     else:
         raise ValueError
     if len(data.shape) == 2:
@@ -42,6 +30,5 @@ def load_st_dataset(dataset):
     return data
 
 #
-# data_path = os.path.join('../data/Seattle/Loop_Seattle.npz')
-# data = np.load(data_path,allow_pickle=True)['data'][:, :, 0]
-# print(data)
+# data_path = os.path.join('../data/PeMS07/PEMS07.npz')
+# data = np.load(data_path)['data'][:, :, 0]  # onley the first dimension, traffic flow data
