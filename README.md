@@ -1,4 +1,4 @@
-# PDG2Seq: Periodic Dynamic Graph to Sequence model for Traffic Flow Prediction
+# [Neural Networks] PDG2Seq: Periodic Dynamic Graph to Sequence model for Traffic Flow Prediction
 This is the code repository for the Periodic Dynamic Graph to Sequence model (PDG2Seq).
 
 ## Table of Contents
