@@ -46,7 +46,13 @@ such as `python run.py --dataset PEMSD4`
 
 There are two options for `{MODE_NAME}` : `train` and `test`
 
+
 Selecting `train` will retrain the model and save the trained model parameters and records in the `experiment` folder.
 
 With `test` selected, run.py will import the trained model parameters from `{DATASET_NAME}.pth` in the `pre-trained` folder.
+
+## More Related Works
+
+- [[Pattern Recognition] A Decomposition Dynamic Graph Convolutional Recurrent Network for Traffic Forecasting](https://www.sciencedirect.com/science/article/pii/S0031320323003710)
+  [[Neural Networks] RGDAN: A random graph diffusion attention network for traffic prediction](https://doi.org/10.1016/j.neunet.2023.106093)
 
