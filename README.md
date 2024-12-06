@@ -1,6 +1,6 @@
 # [Neural Networks] PDG2Seq: Periodic Dynamic Graph to Sequence model for Traffic Flow Prediction
 This is a PyTorch implementation of PDG2Seq: Periodic Dynamic Graph to Sequence model for Traffic Flow Prediction, as described in our paper: Jin Fan, [Weng, Wenchao](https://github.com/wengwenchao123/), Qikai Chen, Huifeng Wu,Jia Wu
-, **[PDG2Seq: Periodic Dynamic Graph to Sequence Model for Traffic Flow Prediction]((https://www.sciencedirect.com/science/article/pii/S0893608024008700?via%3Dihub))**, Neural Networks 2024.
+, **[PDG2Seq: Periodic Dynamic Graph to Sequence Model for Traffic Flow Prediction](https://www.sciencedirect.com/science/article/pii/S0893608024008700?via%3Dihub)**, Neural Networks 2024.
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/pdg2seq-periodic-dynamic-graph-to-sequence/traffic-prediction-on-pemsd3)](https://paperswithcode.com/sota/traffic-prediction-on-pemsd3?p=pdg2seq-periodic-dynamic-graph-to-sequence)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/pdg2seq-periodic-dynamic-graph-to-sequence/traffic-prediction-on-pemsd4)](https://paperswithcode.com/sota/traffic-prediction-on-pemsd4?p=pdg2seq-periodic-dynamic-graph-to-sequence)
