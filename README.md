@@ -1,5 +1,15 @@
 # [Neural Networks] PDG2Seq: Periodic Dynamic Graph to Sequence model for Traffic Flow Prediction
-This is the code repository for the Periodic Dynamic Graph to Sequence model (PDG2Seq).
+# [Pattern Recognition] Decomposition Dynamic Graph Conolutional Recurrent Network for Traffic Forecasting  
+
+This is a PyTorch implementation of PDG2Seq: Periodic Dynamic Graph to Sequence model for Traffic Flow Prediction, as described in our paper: Jin Fan, [Weng, Wenchao](https://github.com/wengwenchao123/), Qikai Chen, Huifeng Wu,Jia Wu
+, **[PDG2Seq: Periodic Dynamic Graph to Sequence Model for Traffic Flow Prediction]([https://www.sciencedirect.com/science/article/pii/S0031320323003710](https://www.sciencedirect.com/science/article/pii/S0893608024008700?via%3Dihub))**, Neural Networks 2024.
+
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/a-decomposition-dynamic-graph-convolutional/traffic-prediction-on-pemsd3)](https://paperswithcode.com/sota/traffic-prediction-on-pemsd3?p=a-decomposition-dynamic-graph-convolutional)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/a-decomposition-dynamic-graph-convolutional/traffic-prediction-on-pemsd4)](https://paperswithcode.com/sota/traffic-prediction-on-pemsd4?p=a-decomposition-dynamic-graph-convolutional)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/a-decomposition-dynamic-graph-convolutional/traffic-prediction-on-pems07)](https://paperswithcode.com/sota/traffic-prediction-on-pems07?p=a-decomposition-dynamic-graph-convolutional)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/a-decomposition-dynamic-graph-convolutional/traffic-prediction-on-pems08)](https://paperswithcode.com/sota/traffic-prediction-on-pems08?p=a-decomposition-dynamic-graph-convolutional)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/a-decomposition-dynamic-graph-convolutional/traffic-prediction-on-pemsd7-m)](https://paperswithcode.com/sota/traffic-prediction-on-pemsd7-m?p=a-decomposition-dynamic-graph-convolutional)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/a-decomposition-dynamic-graph-convolutional/traffic-prediction-on-pemsd7-l)](https://paperswithcode.com/sota/traffic-prediction-on-pemsd7-l?p=a-decomposition-dynamic-graph-convolutional)
 
 ## Table of Contents
 
