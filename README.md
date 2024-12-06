@@ -1,6 +1,4 @@
 # [Neural Networks] PDG2Seq: Periodic Dynamic Graph to Sequence model for Traffic Flow Prediction
-# [Pattern Recognition] Decomposition Dynamic Graph Conolutional Recurrent Network for Traffic Forecasting  
-
 This is a PyTorch implementation of PDG2Seq: Periodic Dynamic Graph to Sequence model for Traffic Flow Prediction, as described in our paper: Jin Fan, [Weng, Wenchao](https://github.com/wengwenchao123/), Qikai Chen, Huifeng Wu,Jia Wu
 , **[PDG2Seq: Periodic Dynamic Graph to Sequence Model for Traffic Flow Prediction]([https://www.sciencedirect.com/science/article/pii/S0031320323003710](https://www.sciencedirect.com/science/article/pii/S0893608024008700?via%3Dihub))**, Neural Networks 2024.
 
